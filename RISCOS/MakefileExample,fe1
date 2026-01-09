@@ -33,7 +33,7 @@ CDEFINES   =
 FORTIFY    = no
 
 # Space separated list of libraries to link against.
-LIBS       = ${CLIB} <Lib$Dir>.LineNoise.o.libLineNoise
+LIBS       = ${CLIB} C:LineNoise.o.libLineNoise
 
 # Objects to build, using the format o.<name> (will be varied for build type)
 OBJS       = o.example \

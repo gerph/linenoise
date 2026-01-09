@@ -25,11 +25,11 @@ EXPORTS    = ${EXP_C_H}.${COMPONENT}SWIs
 
 # Comma-separated list of paths to use for includes, such as:
 #	<Lib$Dir>.LibName.
-INCLUDES   = <Lib$Dir>.LineNoise.
+INCLUDES   = C:LineNoise.
 
 # Space separated list of libraries to link against.
 # (${CLIB} is implicit, unless NOCLIB = yes)
-LIBS       = <Lib$Dir>.LineNoise.o.libLineNoisezm
+LIBS       = C:LineNoise.o.libLineNoisezm
 
 # Enable Fortify?
 FORTIFY    = no

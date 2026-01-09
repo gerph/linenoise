@@ -30,7 +30,7 @@ jobs:
       - echo **** Building library ****
       - dir RISCOS
       - amu export -f MakefileLib
-      - copy <Lib$Dir>.LineNoise ^.Artifacts.Lib ~CVR
+      - copy <Exports$Dir>.Lib.LineNoise ^.Artifacts.Lib ~CVR
 
       - echo **** Building command line tool ****
       - amu -f MakefileExample
