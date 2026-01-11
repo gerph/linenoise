@@ -23,19 +23,21 @@ name: RISC OS
 # Controls when the action will run. Triggers the workflow on:
 #   * push on any branch.
 #   * tag creation for tags beginning with a 'v'
+#   * pull requests
 on:
   push:
     branches: ["*"]
     tags: ["v*"]
-  # Pull request events happen on pull request state transitions, so we probably don't want this here.
-  #pull_request:
-  #  branches: ["*"]
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: ["*"]
 
 jobs:
   build-riscos:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    concurrency:
+      group: riscos-build-server
     outputs:
       version: ${{ steps.version.outputs.version }}
       leafname: ${{ steps.version.outputs.leafname }}
@@ -48,14 +50,16 @@ jobs:
       - name: Obtain prerequisite build tool
         run: |
           # Fetch the build client
-          curl -s -L -o riscos-build-online https://github.com/gerph/robuild-client/releases/download/v0.07/riscos-build-online && chmod +x riscos-build-online
+          curl -s -L -o riscos-build-online https://github.com/gerph/robuild-client/releases/download/v0.05/riscos-build-online && chmod +x riscos-build-online
 
       - name: Build through build.riscos.online
         run: |
           set -o pipefail
           cd RISCOS && make -f genlinks.makefile && cd ..
+
           # Zip up the source to send to robuild
           zip -q9r /tmp/source-archive.zip RISCOS/c RISCOS/h RISCOS/module/c RISCOS/module/h RISCOS/module/cmhg RISCOS/module/s RISCOS/Makefile* RISCOS/module/Makefile* RISCOS/module/VersionNum .robuild.yaml 
+
           # Send the archive file to build service
           ./riscos-build-online -i /tmp/source-archive.zip -a off -o /tmp/built
 
@@ -78,7 +82,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "leafname=$leafname" >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: RISCOS-build
           path: ${{ steps.version.outputs.leafname }}
@@ -94,7 +98,7 @@ jobs:
       contents: write
     steps:
       - name: Download built RISC OS binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: RISCOS-build
 
